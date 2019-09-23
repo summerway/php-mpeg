@@ -1,0 +1,41 @@
+{
+    "name": "maplesnow/php-ffmpeg",
+    "description": "PHP FFMpeg - Video Transcoding & Streaming",
+    "type": "library",
+    "keywords": [
+        "dash",
+        "hls",
+        "video",
+        "videostreaming",
+        "streaming"
+    ],
+    "homepage": "https://github.com/summerway/php-ffmpeg",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "MapleSnow",
+            "email": "summerweiace@163.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "config": {
+        "sort-packages": true
+    },
+    "autoload": {
+        "files": [
+            "src/helpers.php"
+        ],
+        "psr-4": {
+            "Streaming\\": "src"
+        }
+    },
+    "require": {
+        "php": "^7.0",
+        "ext-openssl": "*",
+        "php-ffmpeg/php-ffmpeg": "^0.14",
+        "qiniu/php-sdk": "^7.2"
+    },
+    "suggest": {
+        "php-ffmpeg/php-ffmpeg": "php-ffmpeg/php-ffmpeg is required for video support."
+    }
+}
