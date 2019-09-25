@@ -81,7 +81,10 @@ class Qiniu {
 
         !$preserve && @unlink($origin);
 
-        return $this->getDomain($bucket) . DIRECTORY_SEPARATOR . $res['key'];
+        $filename = $res['key'] ?? "";
+        $fileHash = $res['hash'] ?? "";
+        $url = $this->getDomain($bucket) . DIRECTORY_SEPARATOR . $res['key'];
+        return compact('filename','fileHash','url');
     }
 
     /**

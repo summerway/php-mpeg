@@ -10,7 +10,7 @@
 
 ## 安装
 ``` bash
-composer require maplesnow/php-ffmpeg-video-streaming
+composer require maplesnow/php-ffmpeg
 ```
 
 ### 配置
@@ -123,7 +123,7 @@ $video->HLS()
 ```
 **NOTE:** It is very important to protect your key on your website using a token or a session/cookie(****It is highly recommended****).    
 
-See **[HLS options](https://ffmpeg.org/ffmpeg-formats.html#hls-2)** for more information.
+更多参数详见 **[HLS options](https://ffmpeg.org/ffmpeg-formats.html#hls-2)** 
 
 ### 保存文件
 两种文件存储方式
