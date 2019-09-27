@@ -18,6 +18,11 @@ use Exception;
 
 class Qiniu {
 
+    const
+        TYPE_FILE = 'file',
+        TYPE_DIRECTORY = 'directory'
+    ;
+
     /**
      * @var Auth
      */
@@ -78,7 +83,8 @@ class Qiniu {
             }
 
             return 1 == count($data) ? Arr::first($data) : [
-                'type' => 'directory',
+                'type' => $this::TYPE_DIRECTORY,
+                'url' => $this->getDomain($bucket) . DIRECTORY_SEPARATOR . $prefix,
                 'dirName' => $prefix,
                 'data' => $data
             ];
@@ -199,7 +205,7 @@ class Qiniu {
         $url = $this->getDomain($bucket) . DIRECTORY_SEPARATOR . $res['key'];
         $md5 = md5_file($this->privateDownloadUrl($url));
         return [
-            'type' => 'file',
+            'type' => $this::TYPE_FILE,
             'data' => compact('filename','cloudHash','url','md5')
         ];
     }
