@@ -15,6 +15,7 @@ use Qiniu\Storage\UploadManager;
 use Streaming\Helpers\Arr;
 use Streaming\Helpers\FileManager;
 use Exception;
+use Streaming\Helpers\Helper;
 
 class Qiniu {
 
@@ -55,6 +56,18 @@ class Qiniu {
     }
 
     /**
+     * 获取url中的目录值
+     * @param $url
+     * @return string
+     */
+    public function getUrlDirectoryName($url){
+        Helper::isURL($url);
+        $urlArr = explode("/",$url);
+        $dirArr = array_slice($urlArr,3,-1);
+        return $dirArr ? implode("/",$dirArr) : "";
+    }
+
+    /**
      * 获取所有空间
      * @return array
      */
@@ -79,7 +92,7 @@ class Qiniu {
             $data = [];
             foreach(FileManager::files($path) as $file){
                 $saveName = $withDirName ? $prefix . DIRECTORY_SEPARATOR . $file : $file;
-                $data[] = $this->doUpload($bucket,$path .DIRECTORY_SEPARATOR . $file,$token,$preserve,$saveName);
+                $data[] = $this->uploadFile($bucket,$path .DIRECTORY_SEPARATOR . $file,$token,$preserve,$saveName);
             }
 
             return 1 == count($data) ? Arr::first($data) : [
@@ -89,8 +102,52 @@ class Qiniu {
                 'data' => $data
             ];
         }else{
-            return $this->doUpload($bucket,$path,$token,$preserve);
+            return $this->uploadFile($bucket,$path,$token,$preserve);
         }
+    }
+
+    /**
+     * 上传单文件
+     * @param string $bucket 七牛空间名称
+     * @param string $file 上传文件源
+     * @param string|null $token
+     * @param bool $preserve 是否保存源文件
+     * @param string|null $saveName 保存名称
+     * @return array [
+     *      "filename" 文件名
+     *      "cloudHash" 云端hash
+     *      "url" 文件链接
+     *      "md5" 文件md5值
+     * ]
+     * @throws Exception
+     */
+    public function uploadFile($bucket, $file, $token = null, $preserve = true, $saveName = null){
+        $this->checkBucket($bucket);
+        is_null($token) && $token = $this->qiniu->uploadToken($bucket);
+
+        if(!file_exists($file)){
+            throw new Exception("Qiniu upload {$file} not found");
+        }
+        is_null($saveName) && $saveName = basename($file);
+
+        $uploadMgr = new UploadManager();
+        list($res, $err) = $uploadMgr->putFile($token, $saveName, $file);
+
+        if (is_null($res)) {
+            /** @var Error $err */
+            throw new Exception("Qiniu upload {$saveName} failed :".$err->message());
+        }
+
+        !$preserve && @unlink($file);
+
+        $filename = $res['key'] ?? "";
+        $cloudHash = $res['hash'] ?? "";
+        $url = $this->getDomain($bucket) . DIRECTORY_SEPARATOR . $res['key'];
+        $md5 = md5_file($this->privateDownloadUrl($url));
+        return [
+            'type' => $this::TYPE_FILE,
+            'data' => compact('filename','cloudHash','url','md5')
+        ];
     }
 
     /**
@@ -165,49 +222,6 @@ class Qiniu {
         }
 
         return true;
-    }
-
-    /**
-     * 上传
-     * @param string $bucket 七牛空间名称
-     * @param string $file 上传文件源
-     * @param string $token
-     * @param bool $preserve 是否保存源文件
-     * @param string|null $saveName 保存名称
-     * @return array [
-     *      "filename" 文件名
-     *      "cloudHash" 云端hash
-     *      "url" 文件链接
-     *      "md5" 文件md5值
-     * ]
-     * @throws Exception
-     */
-    private function doUpload($bucket, $file, $token, $preserve = true, $saveName = null){
-        $this->checkBucket($bucket);
-
-        if(!file_exists($file)){
-            throw new Exception("Qiniu upload {$file} not found");
-        }
-        is_null($saveName) && $saveName = basename($file);
-
-        $uploadMgr = new UploadManager();
-        list($res, $err) = $uploadMgr->putFile($token, $saveName, $file);
-
-        if (is_null($res)) {
-            /** @var Error $err */
-            throw new Exception("Qiniu upload {$saveName} failed :".$err->message());
-        }
-
-        !$preserve && @unlink($file);
-
-        $filename = $res['key'] ?? "";
-        $cloudHash = $res['hash'] ?? "";
-        $url = $this->getDomain($bucket) . DIRECTORY_SEPARATOR . $res['key'];
-        $md5 = md5_file($this->privateDownloadUrl($url));
-        return [
-            'type' => $this::TYPE_FILE,
-            'data' => compact('filename','cloudHash','url','md5')
-        ];
     }
 
     /**

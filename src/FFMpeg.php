@@ -54,10 +54,8 @@ class FFMpeg
     }
 
     /**
-     * @param string $url
-     * @param string|null $save_to
-     * @param string $method
-     * @param $request_options
+     * @param $url
+     * @param null $save_to
      * @return Media
      * @throws Exception
      */

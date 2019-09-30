@@ -1,28 +1,28 @@
 <?php
-
 /**
- * This file is part of the PHP-FFmpeg-video-streaming package.
- *
- * (c) Amin Yazdanpanah <contact@aminyazdanpanah.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * Created by PhpStorm.
+ * User: Maple.xia
+ * Date: 2019/9/22
+ * Time: 3:07 PM
  */
 
 namespace Streaming\Helpers;
 
 use Streaming\Exception\InvalidArgumentException;
 
-class Helper
-{
+/**
+ * 公共帮助类
+ * Class Helper
+ * @package Streaming\Helpers
+ */
+class Helper {
     /**
      * round a number to nearest even number
      *
      * @param float $number
      * @return int
      */
-    public static function roundToEven(float $number): int
-    {
+    public static function roundToEven($number) {
         return (($number = intval($number)) % 2 == 0) ? $number : $number + 1;
     }
 
@@ -30,18 +30,16 @@ class Helper
      * @param int $length
      * @return bool|string
      */
-    public static function randomString($length = 10)
-    {
+    public static function randomString($length = 10) {
         $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         return substr(str_shuffle(str_repeat($chars, ceil($length / strlen($chars)))), 1, $length);
     }
 
     /**
-     * @param $word
+     * @param string $word
      * @return bool|string
      */
-    public static function appendSlash(string $word)
-    {
+    public static function appendSlash($word) {
         if ($word) {
             return rtrim($word, '/') . '/';
         }
@@ -49,11 +47,10 @@ class Helper
     }
 
     /**
-     * @param $url
+     * @param string $url
      * @return bool
      */
-    public static function isURL(string $url)
-    {
+    public static function isURL($url) {
         if (!filter_var($url, FILTER_VALIDATE_URL)) {
             throw new InvalidArgumentException("Your URL($url) is not valid! Your URL should start with (http://) or (https://).");
         }

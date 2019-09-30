@@ -1,23 +1,22 @@
 <?php
-
 /**
- * This file is part of the PHP-FFmpeg-video-streaming package.
- *
- * (c) Amin Yazdanpanah <contact@aminyazdanpanah.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * Created by PhpStorm.
+ * User: Maple.xia
+ * Date: 2019/9/21
+ * Time: 2:07 PM
  */
-
 
 namespace Streaming\Helpers;
 
 use Streaming\Exception\Exception;
-use Streaming\Exception\RuntimeException;
 
+/**
+ * 文件操作类
+ * Class FileManager
+ * @package Streaming\Helpers
+ */
 class FileManager
 {
-
 
     /**
      * Get an array of all files in a directory.
@@ -30,8 +29,9 @@ class FileManager
     }
 
     /**
-     * @param $url
-     * @param $saveTo
+     * 下载文件
+     * @param string $url 文件url
+     * @param string $saveTo 保存目录
      * @return bool
      */
     public static function downloadFile($url, $saveTo) {
@@ -54,16 +54,17 @@ class FileManager
     }
 
     /**
-     * @param $dirname
-     * @param int $mode
-     * @throws Exception
+     * 创建目录
+     * @param string $path 目录名
+     * @param int $mode 权限
+     * @return bool
      */
-    public static function makeDir($dirname, $mode = 0777)
+    public static function makeDir($path, $mode = 0777)
     {
-        if(file_exists($dirname)){
+        if(file_exists($path)){
             return true;
         }
-        return mkdir($dirname);
+        return mkdir($path, $mode);
     }
 
     /**
@@ -89,7 +90,6 @@ class FileManager
 
     /**
      * @return string
-     * @throws Exception
      */
     private static function tmpDirPath(): string
     {
@@ -100,9 +100,9 @@ class FileManager
     }
 
     /**
-     * @param string $source
-     * @param string $destination
-     * @throws Exception
+     * @param $source
+     * @param $destination
+     * @return bool
      */
     public static function moveDir($source, $destination)
     {
@@ -111,7 +111,9 @@ class FileManager
     }
 
     /**
+     * 递归删除目录
      * @param $dir
+     * @param bool $preserve 是否保存根目录
      * @return bool
      */
     public static function deleteDirectory($dir,$preserve = false)
@@ -125,12 +127,10 @@ class FileManager
         }
 
         foreach (static::files($dir) as $item) {
-            if (!static::deleteDirectory($dir . DIRECTORY_SEPARATOR . $item)) {
-                return false;
-            }
+            static::deleteDirectory($dir . DIRECTORY_SEPARATOR . $item, false);
         }
 
-        if ( ! $preserve) @rmdir($directory);
+        !$preserve && @rmdir($dir);
 
         return true;
     }

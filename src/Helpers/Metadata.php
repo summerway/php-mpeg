@@ -1,12 +1,9 @@
 <?php
-
 /**
- * This file is part of the PHP-FFmpeg-video-streaming package.
- *
- * (c) Amin Yazdanpanah <contact@aminyazdanpanah.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * Created by PhpStorm.
+ * User: Maple.xia
+ * Date: 2019/9/22
+ * Time: 3:57 PM
  */
 
 namespace Streaming\Helpers;

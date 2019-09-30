@@ -8,7 +8,11 @@
 
 namespace Streaming\Helpers;
 
-
+/**
+ * 数组操作类
+ * Class Arr
+ * @package Streaming\Helpers
+ */
 class Arr {
 
     /**
@@ -41,13 +45,12 @@ class Arr {
     /**
      * 获取数组第一个元素
      * @param array $array
-     * @param null $callback
-     * @param null $default
+     * @param null|string $default
      * @return mixed
      */
     public static function first($array, $default = null) {
         if (empty($array)) {
-            return value($default);
+            return $default;
         }
 
         foreach ($array as $item) {
